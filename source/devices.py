@@ -1,5 +1,7 @@
-from typing import Callable
+from typing import Callable, dataclass_transform
 from pyttsx3 import init, Engine
+
+from speech_recognition import 
 
 from requests import get
 
@@ -35,7 +37,9 @@ class SpeechRecognizer:
 
     def recordAndRecognizeSpeech(self) -> MessageInfo:
         return self._recognitionMethod()
-    
-    def _checkInternetConnection(self) -> bool:
+        
+    def recognizeSpeechOnline(self) -> MessageInfo:
 
-
+class UsbController:
+    def __init__(self, vendorID: int, productID: int) -> None:
+        pass
