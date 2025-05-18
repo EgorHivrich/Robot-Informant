@@ -1,5 +1,9 @@
-from devices import (
-    Speaker, SpeechRecognizer, MessageInfo
-)
+from subsystems.eventsystem import bindEventHandler, Event
 
-if __name__ == "__main__": exit(0)
+event = Event(Event.EventType.VoiceMessage, None)
+
+@bindEventHandler(event=event)
+def handler() -> None:
+    print("Hello world")
+
+print(event.handler != None)
