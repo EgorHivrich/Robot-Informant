@@ -1,9 +1,4 @@
-from subsystems.eventsystem import bindEventHandler, Event
+from utility.loggers import EmailLogger 
 
-event = Event(Event.EventType.VoiceMessage, None)
-
-@bindEventHandler(event=event)
-def handler() -> None:
-    print("Hello world")
-
-print(event.handler != None)
+logger = EmailLogger("therobotadolf@gmail.com", "dolbit21029384756", "maoczedun47@gmail.com")
+logger.logData()

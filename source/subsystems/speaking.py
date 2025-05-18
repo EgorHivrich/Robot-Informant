@@ -1,8 +1,10 @@
-if __name__ != "__main__":
-    from source.utils import FileLogger
+#if __name__ != "__main__":
+#   from source.utils import FileLogger
     
 from abc import ABC, abstractclassmethod
-import pyttsx3, subprocess
+import pyttsx3, subprocess, os
+
+from time import sleep
 
 class ISpeaker (ABC):
     def __init__(self, driverName: str = "espeak") -> None:
@@ -18,8 +20,8 @@ class ISpeaker (ABC):
 
 class DefaultSpeaker (ISpeaker):
     def speak(self, message: str) -> None:
-        pyttsx3.speak(message)
-        self.driver.runAndWait()
+        os.system(f"""sudo espeak "{message}" 2>/dev/null""")
+        #self.driver.runAndWait()
 
     def __str__(self) -> str:
         return "current speaker is default espeak."
@@ -34,13 +36,14 @@ class FileSpeaker (ISpeaker):
     def speak(self, message: str) -> None:
         filePath = f"{self._directory}/{self.TEMP_FILE_NAME}"
         self.driver.save_to_file(message, filePath)
+        self.driver.runAndWait()
 
-        subprocess.run(f"espeak {filePath} && rm {filePath}")
+        subprocess.Popen(["aplay", f"{filePath}"])
 
     def __str__(self) -> str:
         return f"File speaker is using now. saving directory: {self._directory}"
 
-AVAILABLE_DRIVERS: list[str] = ["espeak", "sapi5"]
+AVAILABLE_DRIVERS: list[str] = ["espeak", "dummy"]
 SPEAKER_TYPES = [FileSpeaker, DefaultSpeaker]
 
 AVAILABLE_SPEAKERS: dict[str, ISpeaker] = {}
@@ -48,7 +51,7 @@ AVAILABLE_SPEAKERS: dict[str, ISpeaker] = {}
 for index in range(len(AVAILABLE_DRIVERS)):
     try:
         AVAILABLE_SPEAKERS[AVAILABLE_DRIVERS[index]+f"_{index}"] = SPEAKER_TYPES[index](AVAILABLE_DRIVERS[index])
-    except RuntimeError:
+    except (RuntimeError, TypeError, ModuleNotFoundError):
         print("speaker is not available")
         continue
 
@@ -65,4 +68,6 @@ def testSpeakers(message: str) -> None:
 
 if __name__ == "__main__" :
     print("testing speaking sybsystem... Result is written in logs.txt")
-    testSpeakers("""Hello world\nПривет мир""")
+    testSpeakers("Hello world")
+
+
