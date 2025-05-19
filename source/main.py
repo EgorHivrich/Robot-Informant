@@ -1,4 +1,7 @@
-from utility.loggers import EmailLogger 
-
-logger = EmailLogger("therobotadolf@gmail.com", "dolbit21029384756", "maoczedun47@gmail.com")
-logger.logData()
+def function(*args, **kwargs) -> None:
+    print(kwargs)
+    
+function({
+    "name": 3,
+    "p": 4
+})
