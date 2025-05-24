@@ -1,7 +1,17 @@
-def function(*args, **kwargs) -> None:
-    print(kwargs)
+from subsystems.audio import (
+    listening, speaking
+)    
+
+def main() -> None:
+    commands = {
+        "привет": "Hello",
+        "пока": "Good bye"
+    }
+
+    speaker = speaking.DefaultSpeaker("espeak")
+    command = listening.listenAndRecognizeSpeech()
     
-function({
-    "name": 3,
-    "p": 4
-})
+    speaker.speak(command)
+
+if __name__ == "__main__":
+    main() 
