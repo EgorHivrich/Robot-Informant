@@ -4,3 +4,4 @@ libs/
 .vscode/
 
 ./source/api.py
+__pycache__
