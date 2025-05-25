@@ -1,14 +1,11 @@
-#if __name__ != "__main__":
-#   from source.utils import FileLogger
-    
 from abc import ABC, abstractclassmethod
 import pyttsx3, subprocess, os
 
-from time import sleep
+from ..service import IService
 
-class ISpeaker (ABC):
-    def __init__(self, driverName: str = "espeak") -> None:
-        self.__driver = pyttsx3.init(driverName)
+class ISpeaker (ABC, IService):
+    def __init__(self, driverName: str) -> None:
+        self.__driver = pyttsx3.init()
 
     @abstractclassmethod
     def speak(self, message: str) -> None:
@@ -20,11 +17,9 @@ class ISpeaker (ABC):
 
 class DefaultSpeaker (ISpeaker):
     def speak(self, message: str) -> None:
-        os.system(f"""sudo espeak "{message}" 2>/dev/null""")
-        #self.driver.runAndWait()
+        self.driver.say(message)
+        self.driver.runAndWait()
 
-    def __str__(self) -> str:
-        return "current speaker is default espeak."
 
 class FileSpeaker (ISpeaker):
     TEMP_FILE_NAME: str = "temp.mp3"
@@ -39,9 +34,6 @@ class FileSpeaker (ISpeaker):
         self.driver.runAndWait()
 
         subprocess.Popen(["aplay", f"{filePath}"])
-
-    def __str__(self) -> str:
-        return f"File speaker is using now. saving directory: {self._directory}"
 
 AVAILABLE_DRIVERS: list[str] = ["espeak", "dummy"]
 SPEAKER_TYPES = [FileSpeaker, DefaultSpeaker]
