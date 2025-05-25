@@ -8,10 +8,15 @@ class ILoggingKind (ABC):
 	def logData(self, *args, **kwargs) -> bool:
 		raise NotImplemented()
 
-	_isDisabled: bool = False
+	isDisabled: bool = False
 
 class Logger: 
-	@property
+    def __new__(cls: object) -> object:
+        if not hasattr(cls, "_instance") == True:
+            _instance = super(Logger, cls).__new__(cls)
+        return cls.instance
+
+    @property
 	def loggingKind(self) -> list[ILoggingKind]: return _loggingKind
 		
 	@loggingKind.setter
@@ -20,6 +25,14 @@ class Logger:
 			self._loggingKind.append(item)
 		return self._loggingKind
 			
+    def logData(self, *args, **kwargs) -> bool:
+        result = [ ]
+        for kind in self._loggingKinds:
+            if kind.isDisabled == True:
+                continue
+            kind.logData(*args)
+        return not result.__contains__(False)
+
 	_loggingKind: list[ILoggingKind] = [ ]
 
 class TextLoggingKind (ILoggingKind):
